@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ember & Rise - Daily Motivation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Libre+Baskerville:wght@400;700&family=Montserrat:wght@300;400;500&family=Alex+Brush&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #f8f6f3;
+            --bg-secondary: #f0ede8;
+            --text-primary: #3a3532;
+            --text-secondary: #8b7f76;
+            --text-light: #b5a99f;
+            --accent-terracotta: #c9a18a;
+            --accent-sage: #a8b5a0;
+            --accent-mauve: #b5a0a8;
+            --accent-warm: #d4b5a0;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --shadow: rgba(58, 53, 50, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 2rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(248, 246, 243, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(58, 53, 50, 0.05);
+            animation: slideDown 1s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .logo {
+            font-family: 'Alex Brush', cursive;
+            font-size: 2.2rem;
+            color: var(--accent-terracotta);
+            letter-spacing: 0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            text-decoration: none;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent-terracotta);
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-terracotta);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 1100px;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInUp 1.5s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .daily-quote {
+            font-family: 'Libre Baskerville', serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 400;
+            line-height: 1.4;
+            color: var(--text-primary);
+            margin-bottom: 3rem;
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .daily-quote::before,
+        .daily-quote::after {
+            font-family: 'Alex Brush', cursive;
+            font-size: 6rem;
+            color: var(--accent-terracotta);
+            opacity: 0.3;
+            position: absolute;
+        }
+
+        .daily-quote::before {
+            content: '"';
+            top: -2rem;
+            left: -1rem;
+        }
+
+        .daily-quote::after {
+            content: '"';
+            bottom: -3rem;
+            right: -1rem;
+        }
+
+        .quote-author {
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-top: 2rem;
+        }
+
+        .motivation-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 4rem 3.5rem;
+            margin-top: 4rem;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 20px 60px var(--shadow);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 3rem;
+        }
+
+        .cta-btn {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 1.2rem 3rem;
+            border: 2px solid var(--accent-terracotta);
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--accent-terracotta);
+            transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: -1;
+        }
+
+        .cta-btn:hover::before {
+            left: 0;
+        }
+
+        .cta-btn:hover {
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(201, 161, 138, 0.3);
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            padding: 8rem 2rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(240, 237, 232, 0.5) 100%);
+        }
+
+        .section-title {
+            font-family: 'Alex Brush', cursive;
+            font-size: 3.5rem;
+            text-align: center;
+            color: var(--accent-terracotta);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 5rem;
+        }
+
+        .testimonials-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            padding: 0 2rem;
+        }
+
+        .testimonial-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 15px 40px var(--shadow);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        .testimonial-card:nth-child(1) { animation-delay: 0.1s; }
+        .testimonial-card:nth-child(2) { animation-delay: 0.2s; }
+        .testimonial-card:nth-child(3) { animation-delay: 0.3s; }
+        .testimonial-card:nth-child(4) { animation-delay: 0.4s; }
+        .testimonial-card:nth-child(5) { animation-delay: 0.5s; }
+        .testimonial-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 60px rgba(58, 53, 50, 0.15);
+        }
+
+        .stars {
+            color: var(--accent-terracotta);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(58, 53, 50, 0.1);
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-terracotta), var(--accent-mauve));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 1.2rem;
+        }
+
+        .author-info h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .author-info p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 8rem 2rem;
+            background: var(--bg-primary);
+        }
+
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-intro {
+            text-align: center;
+            margin-bottom: 4rem;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+
+        .form-group label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 0.8rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            background: var(--glass-bg);
+            border: 1px solid rgba(58, 53, 50, 0.15);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-terracotta);
+            box-shadow: 0 0 0 3px rgba(201, 161, 138, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 1.5rem;
+            background: var(--accent-terracotta);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 2rem;
+        }
+
+        .submit-btn:hover {
+            background: var(--accent-warm);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(201, 161, 138, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #3a3532 0%, #2a2522 100%);
+            color: var(--bg-primary);
+            padding: 5rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 4rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h3 {
+            font-family: 'Alex Brush', cursive;
+            font-size: 2rem;
+            color: var(--accent-terracotta);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: var(--text-light);
+            text-decoration: none;
+            line-height: 2;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent-terracotta);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            border-color: var(--accent-terracotta);
+            background: var(--accent-terracotta);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(181, 169, 159, 0.2);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            background: var(--accent-sage);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 2rem;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 1.5rem 2rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1.5rem;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        /* Custom cursor effect */
+        .custom-cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent-terracotta);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.1s ease;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        @media (pointer: fine) {
+            .custom-cursor {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="cursor"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">Ember & Rise</div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#testimonials">Stories</a></li>
+            <li><a href="#contact">Connect</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <p class="hero-subtitle">Your Daily Spark of Inspiration</p>
+            <div class="motivation-card">
+                <div class="daily-quote" id="dailyQuote"></div>
+                <p class="quote-author" id="quoteAuthor"></p>
+            </div>
+            <div class="cta-buttons">
+                <a href="#contact" class="cta-btn">Share Your Journey</a>
+                <div class="cta-btn" onclick="getNewMotivation()" style="cursor: pointer;">Need More Energy?</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <h2 class="section-title">Stories of Transformation</h2>
+        <p class="section-subtitle">Real people, Real change</p>
+        
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"I was going through a really tough time after losing my job. The daily motivation here helped me see each day as a new opportunity. Now I'm running my own business and couldn't be happier!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">SC</div>
+                    <div class="author-info">
+                        <h4>Sarah Chen</h4>
+                        <p>Entrepreneur, San Francisco</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"As a student struggling with anxiety, I found this space to be my refuge. The personalized motivation I received gave me the courage to speak up and pursue my dreams."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">MK</div>
+                    <div class="author-info">
+                        <h4>Maya Krishnan</h4>
+                        <p>Graduate Student, London</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"After my divorce, I felt lost. This community reminded me that endings are also beginnings. The daily quotes became my morning ritual, and I've never felt stronger."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">JR</div>
+                    <div class="author-info">
+                        <h4>James Rodriguez</h4>
+                        <p>Teacher, New York</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"I reached out when I was overwhelmed with work stress. The personalized response I got wasn't just motivational—it was practical and life-changing. Thank you!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">EA</div>
+                    <div class="author-info">
+                        <h4>Emma Anderson</h4>
+                        <p>Designer, Melbourne</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"Battling health issues made me feel powerless. The daily inspiration here taught me that while I can't control everything, I can control my mindset. Game changer."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">DL</div>
+                    <div class="author-info">
+                        <h4>David Lee</h4>
+                        <p>Writer, Toronto</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"As a single mom working two jobs, I barely had time to breathe. These daily messages became my lifeline—reminding me I'm stronger than I think. Forever grateful."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">LP</div>
+                    <div class="author-info">
+                        <h4>Lisa Patel</h4>
+                        <p>Nurse, Chicago</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="contact-container">
+            <h2 class="section-title">Share Your Story</h2>
+            <p class="section-subtitle">Get personalized motivation</p>
+            
+            <p class="contact-intro">
+                Sometimes we all need a personalized word of encouragement. Share what you're going through, 
+                and receive motivation tailored specifically for your journey. You're not alone.
+            </p>
+
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" name="name" required placeholder="What should we call you?">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="your@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="topic">What do you need motivation for?</label>
+                    <select id="topic" name="topic" required>
+                        <option value="">Choose a topic...</option>
+                        <option value="career">Career & Work</option>
+                        <option value="relationships">Relationships</option>
+                        <option value="health">Health & Wellness</option>
+                        <option value="personal-growth">Personal Growth</option>
+                        <option value="grief">Loss & Grief</option>
+                        <option value="anxiety">Anxiety & Stress</option>
+                        <option value="confidence">Confidence & Self-Esteem</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Tell us your story</label>
+                    <textarea id="message" name="message" required placeholder="Share what's on your heart. We're listening..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Send My Message</button>
+            </form>
+
+            <div class="success-message" id="successMessage">
+                ✨ Thank you for sharing! Your message has been received. 
+                Check your email within 24 hours for your personalized motivation. 
+                You've got this! ✨
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Ember & Rise</h3>
+                <p>Igniting your inner strength, one thought at a time. We believe everyone deserves a daily reminder of their unlimited potential.</p>
+                <div class="social-links">
+                    <a href="#" title="Instagram">IG</a>
+                    <a href="#" title="Twitter">TW</a>
+                    <a href="#" title="Facebook">FB</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#testimonials">Success Stories</a></li>
+                    <li><a href="#contact">Get in Touch</a></li>
+                    <li><a href="#">About Us</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Daily Affirmations</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Community Forum</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Stay Connected</h3>
+                <p>Subscribe to receive daily motivation directly in your inbox.</p>
+                <form style="margin-top: 1.5rem;">
+                    <input type="email" placeholder="Your email" style="width: 100%; padding: 0.8rem; border-radius: 5px; border: 1px solid rgba(181, 169, 159, 0.3); background: rgba(255,255,255,0.1); color: var(--bg-primary); margin-bottom: 0.8rem;">
+                    <button type="submit" style="width: 100%; padding: 0.8rem; background: var(--accent-terracotta); border: none; border-radius: 5px; color: white; cursor: pointer; font-family: 'Montserrat', sans-serif; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em;">Subscribe</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Ember & Rise. All rights reserved. Crafted with love and purpose.</p>
+        </div>
+    </footer>
+
+    <script>
+        const motivationalQuotes = [
+            { text: "Your current situation is not your final destination. The best is yet to come.", author: "Unknown" },
+            { text: "You are braver than you believe, stronger than you seem, and smarter than you think.", author: "A.A. Milne" },
+            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+            { text: "Believe in yourself and all that you are. Know that there is something inside you that is greater than any obstacle.", author: "Christian D. Larson" },
+            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+            { text: "You don't have to be great to start, but you have to start to be great.", author: "Zig Ziglar" },
+            { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+            { text: "Every morning we are born again. What we do today is what matters most.", author: "Buddha" },
+            { text: "You are never too old to set another goal or to dream a new dream.", author: "C.S. Lewis" },
+            { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
+            { text: "Your limitation—it's only your imagination.", author: "Unknown" },
+            { text: "Great things never come from comfort zones.", author: "Unknown" },
+            { text: "Dream it. Wish it. Do it.", author: "Unknown" },
+            { text: "Success doesn't just find you. You have to go out and get it.", author: "Unknown" },
+            { text: "The harder you work for something, the greater you'll feel when you achieve it.", author: "Unknown" },
+            { text: "Don't stop when you're tired. Stop when you're done.", author: "Unknown" },
+            { text: "Wake up with determination. Go to bed with satisfaction.", author: "Unknown" },
+            { text: "Do something today that your future self will thank you for.", author: "Sean Patrick Flanery" },
+            { text: "Little things make big days.", author: "Unknown" },
+            { text: "It's going to be hard, but hard does not mean impossible.", author: "Unknown" },
+            { text: "Don't wait for opportunity. Create it.", author: "Unknown" },
+            { text: "Sometimes we're tested not to show our weaknesses, but to discover our strengths.", author: "Unknown" },
+            { text: "The key to success is to focus on goals, not obstacles.", author: "Unknown" },
+            { text: "Dream bigger. Do bigger.", author: "Unknown" },
+            { text: "Don't be afraid to fail, be afraid not to try.", author: "Michael Jordan" },
+            { text: "Your only limit is you.", author: "Unknown" },
+            { text: "Sometimes later becomes never. Do it now.", author: "Unknown" },
+            { text: "One day or day one. You decide.", author: "Unknown" },
+            { text: "You didn't come this far to only come this far.", author: "Unknown" },
+            { text: "The pain you feel today will be the strength you feel tomorrow.", author: "Unknown" }
+        ];
+
+        let currentQuoteIndex = 0;
+
+        function displayQuote(index) {
+            const quoteElement = document.getElementById('dailyQuote');
+            const authorElement = document.getElementById('quoteAuthor');
+            
+            quoteElement.style.opacity = '0';
+            authorElement.style.opacity = '0';
+            
+            setTimeout(() => {
+                quoteElement.textContent = motivationalQuotes[index].text;
+                authorElement.textContent = '— ' + motivationalQuotes[index].author;
+                
+                quoteElement.style.transition = 'opacity 1s ease';
+                authorElement.style.transition = 'opacity 1s ease';
+                quoteElement.style.opacity = '1';
+                authorElement.style.opacity = '1';
+            }, 400);
+        }
+
+        function getNewMotivation() {
+            currentQuoteIndex = (currentQuoteIndex + 1) % motivationalQuotes.length;
+            displayQuote(currentQuoteIndex);
+        }
+
+        // Initialize with daily quote based on date
+        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+        currentQuoteIndex = dayOfYear % motivationalQuotes.length;
+        displayQuote(currentQuoteIndex);
+
+        // Form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show success message
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+            
+            // Reset form
+            this.reset();
+            
+            // Scroll to success message
+            successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Hide message after 10 seconds
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 10000);
+        });
+
+        // Custom cursor
+        const cursor = document.getElementById('cursor');
+        let mouseX = 0;
+        let mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+        });
+
+        // Enlarge cursor on hover over interactive elements
+        const interactiveElements = document.querySelectorAll('a, button, .cta-btn, input, textarea, select');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.width = '40px';
+                cursor.style.height = '40px';
+                cursor.style.backgroundColor = 'rgba(201, 161, 138, 0.2)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.style.width = '20px';
+                cursor.style.height = '20px';
+                cursor.style.backgroundColor = 'transparent';
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
